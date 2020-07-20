@@ -1,6 +1,6 @@
 # SuperEarth 
 
-SuperEarth package is an analytical model for apparoximating core mass fraction (cmf `$M_core/M_total$`) and other interior parameters for a Super-Earth sized planet (1-20`$M_e$`), assuming Earth like composition and interior structure.
+SuperEarth package is an analytical model for apparoximating core mass fraction (cmf $M_core/M_total$) and other interior parameters for a Super-Earth sized planet (1-20$M_e$), assuming Earth like composition and interior structure.
 The analytical function is a fit to a set of generated data using interior structure code which follows [Valencia et al. (2007)](https://iopscience.iop.org/article/10.1086/509800), for more infromation visit [Plotnykov & Valencia (2020)] work.
 
 ## Installation
@@ -11,11 +11,11 @@ The analytical function is a fit to a set of generated data using interior struc
 
 ## Example 
 
-In order to approximate cmf one will need Radius and Mass of the planet, as well as assume the iron (`$x_{Fe}$`) amount in the mantle by mol and silica (`$x_{Si}$`) amount in the core by mol. 
-For the nominal case one should assume 0.1 `$x_{Fe}$` (`$10\%$`) and 0 `$x_{Si}$`.
+In order to approximate cmf one will need Radius and Mass of the planet, as well as assume the iron ($x_{Fe}$) amount in the mantle by mol and silica ($x_{Si}$) amount in the core by mol. 
+For the nominal case one should assume 0.1 $x_{Fe}$ ($10\%$) and 0 $x_{Si}$.
 
 Using Earth as a test case, we can compare the CMF to the approximate solution given by f_cmf and assuming nominal case.
-For this test case the function performs the best, where the worst case is `$\sim 0.02$`. 
+For this test case the function performs the best, where the worst case is $\sim 0.02$. 
     
     >>> import SuperEarth
     >>> cmf_E = 0.325
@@ -23,7 +23,7 @@ For this test case the function performs the best, where the worst case is `$\si
     >>> cmf-cmF_E
     0.0037472894465270246
 
-Once the cmf is know, other useful quentites can be calculated such as the iron to silica refractory ratio (Fe/Si) or the uncompressed density (`$\rho_0$`) of the planet.
+Once the cmf is know, other useful quentites can be calculated such as the iron to silica refractory ratio (Fe/Si) or the uncompressed density ($\rho_0$) of the planet.
 For example, using simulated data from structural code ([Plotnykov & Valencia (2020)]), one can calculate the uncompressed denisty.
 
     import numpy as np
