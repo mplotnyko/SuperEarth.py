@@ -1,6 +1,6 @@
 # SuperEarth 
 
-SuperEarth package is an analytical model for apparoximating core mass fraction (cmf $M_core/M_total$) and other interior parameters for a Super-Earth sized planet (1-20$M_e$), assuming Earth like composition and interior structure.
+SuperEarth package is an analytical model for apparoximating core mass fraction (cmf $M_{core}/M_{total}$) and other interior parameters for a Super-Earth sized planet (1-20$M_e$), assuming Earth like composition and interior structure.
 The analytical function is a fit to a set of generated data using interior structure code which follows [Valencia et al. (2007)](https://iopscience.iop.org/article/10.1086/509800), for more infromation visit [Plotnykov & Valencia (2020)] work.
 
 ## Installation
