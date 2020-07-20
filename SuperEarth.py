@@ -84,7 +84,7 @@ def f_FeSi(cmf,si=0,fe=0.1,py=0.6):
 
 def star_to_planet(FeSi,si=0,fe=0.1,py=0.6):
     """
-    Convert Fe/Si values of the stars to cmf of planet depnding
+    Convert Fe/Si values of the stars to cmf of planet depending
     on the assumed structure.
     Parameters
     -----
