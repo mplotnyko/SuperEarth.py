@@ -34,4 +34,13 @@ plt.xlim(1,15)
 plt.ylim(1,2.5)
 plt.ylabel(r'R/R$_\oplus$')
 plt.xlabel(r'M/M$_\oplus$')
+#plot the estimates for sample compositions
+c = [0,0.32,0.67,0.999]
+x = np.linspace(1,15,30)
+for i,item in enumerate(c):
+    R = np.zeros(len(x))
+    for j,item in enumerate(x):
+        R[j] = guess_R(item,0,cmf=c[i])
+    plt.plot(x,R,c='k',zorder=10)
 plt.savefig('FeSi_star.jpg',fig=fig,bbox_inches='tight')
+

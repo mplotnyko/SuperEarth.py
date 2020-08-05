@@ -13,7 +13,7 @@ def f_cmf(M,R,si=0,fe=0.1):
         M: float/int
             Mass of the planet in Earth masses.
         R: float/int
-            Radius of the planet in Earth radius.
+            Radius of the planet in Earth radii.
         si: float
             Amount of silica in core by mol.
         fe: float
@@ -80,25 +80,18 @@ def f_FeSi(cmf,si=0,fe=0.1,py=0.6):
     Fe,Ni,Si,Mg,O = [55.85e-3,58.69e-3,28.09e-3,24.31e-3,16e-3]
     km = cmf*(2*(1-fe)*Mg+2*fe*Fe+Si*(1+py)+2*O*(2+py))
     kc = (1-cmf)*((0.88-si)*Fe+0.1*Ni+si*Si)  
-    return Fe/Si*( (0.88-si)*km+2*fe*kc )/( si*km+(1+py)*kc )
+    return Fe/Si*((0.88-si)*km+2*fe*kc)/(si*km+(1+py)*kc)
 
 def star_to_planet(FeSi,si=0,fe=0.1,py=0.6):
     """
     Convert Fe/Si values of the stars to cmf of planet depending
     on the assumed structure.
-    Parameters
     -----
-        FeSi: array_like
-            Fe/Si ratio by weight of the stars.
-        si: float
-            Amount of silica in core by mol.
-        fe: float
-            Amount of iron in mantle by mol.
-        py: float
-            Amount of olivine and pyroxene in the mantle.
-    Returns: float
-        Fe/Si ratio by weight.
+    FeSi: float/array_like
+        Fe/Si ratio by weight of the stars.
     """
+    if not isinstance(FeSi, (list, tuple, np.ndarray)): FeSi = [FeSi]
+    FeSi = np.asarray(FeSi) 
     func = lambda cmf,FeSi: (f_FeSi(cmf,si,fe,py)-FeSi)**2
     cmf = np.zeros(len(FeSi))
     for i,item in enumerate(FeSi):
@@ -106,23 +99,58 @@ def star_to_planet(FeSi,si=0,fe=0.1,py=0.6):
         cmf[i] = res.x
     return cmf
 
+def guess_pl(x,cmf,si,fe,py,method):
+    if method=='R':
+        def func(R):
+            if 0.8<R<5.:
+                return (f_cmf(x,R,si,fe)-cmf)**2
+            else:
+                return 1e6
+    elif method=='M':
+        def func(M):
+            if 0.8<M<25:
+                return (f_cmf(M,x,si,fe)-cmf)**2
+            else:
+                return 1e6
+    res = minimize(func,2)
+    return res.x
+def guess_R(M,FeSi,si=0,fe=0.1,py=0.6,cmf=None):
+    """
+    Guess planets radius [Re] given its mass [Me], based on estimate of 
+    Fe/Si ratio of the star.
+    """
+    if cmf is None:
+        cmf = float(star_to_planet(FeSi,si,fe,py))
+    R = guess_pl(M,cmf,si,fe,py,'R')
+    return R
+def guess_M(R,FeSi,si=0,fe=0.1,py=0.6,cmf=None):
+    """
+    Guess planets mass [Me] given its radius [Re], based on estimate of 
+    Fe/Si ratio of the star.
+    """
+    if cmf is None:
+        cmf = float(star_to_planet(FeSi,si,fe,py))
+    M = guess_pl(R,cmf,si,fe,py,'M')
+    return M
+
 def plot_cont(cmf):
     pdf,bins = np.histogram(cmf,int(np.sqrt(len(cmf))),
                         range=(0,max(cmf)),density=True)
     cmf_x = (bins[:-1]+bins[1:])/2
+    
     N = len(cmf_x)
     X1 = np.zeros([N,N])
     Y1 = np.zeros([N,N])
     Z1 = np.zeros([N,N])
-    x = np.linspace(-0.5,1.6,N) #mass in log space
-    m = 0.2544
-    args = np.array([-0.08996526, -0.18532778,  1.0564978 ])
+    M = np.linspace(1,20,N) 
     for i in range(N):
-        c = np.log10(args[2]+args[1]*cmf_x[i]+args[0]*cmf_x[i]**2)
-        y = m*x+c+0.005
-        X1[i] = x
-        Y1[i] = y
+        R = np.zeros(len(M))
+        for j,item in enumerate(M):
+            R[j] = guess_R(item,0,cmf=cmf_x[i])
+        X1[i] = M
+        Y1[i] = R
         Z1[i] += pdf[i]
-    return 10**X1,10**Y1,Z1
-    
-    
+    return X1,Y1,Z1
+
+
+
