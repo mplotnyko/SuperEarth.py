@@ -1,4 +1,4 @@
-# se 
+# SuperEarth 
 
 se package has an analytical model that can calculate interior parameters of exoplanets and plot them, plus can plot and query existing exoplanet data using [NASA Exoplanet Archive's TAP service](https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html#PS).
 1. The core mass fraction (cmf $M_{core}/M_{total}$) 
@@ -11,7 +11,7 @@ The analytical function is a fit to a set of generated planetary structures usin
 
 1. pip install from git
 
-```pip install git+https://github.com/mplotnyko/se.py```
+```pip install git+https://github.com/mplotnyko/superearth.py```
 
 ## Example 
 
