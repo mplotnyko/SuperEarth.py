@@ -56,5 +56,5 @@ Here is the result of such an experiment, where the density contour are converte
 ![](images/FeSi_star.jpg)
 
 Now also supports ploting exoplanets from a NASA Exoplanet Archive, here is an example of only rocky planets.
-![](images/MR_rockyMpl.jpg)
+![](images/MR_rockybest.jpg)
 These examples can be found in the example floder.
