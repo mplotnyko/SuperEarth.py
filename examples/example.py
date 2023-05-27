@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from SuperEarth import *
+from superearth import f_cmf,f_rho0,st_pl,guess_R
+from superearth.utils import plot_cont
 
 data = np.loadtxt('data.csv',skiprows=1,delimiter=',').T
 
@@ -17,13 +18,13 @@ plt.xlim(1,15)
 plt.ylim(1,2.5)
 plt.ylabel(r'R/R$_\oplus$')
 plt.xlabel(r'M/M$_\oplus$')
-plt.savefig('MR_rho0.jpg',fig=fig,bbox_inches='tight')
+plt.savefig('MR_rho0.jpg',bbox_inches='tight')
 
 #2 Plot FeSi of the star in M-R
 fig=plt.figure(dpi=150)
 FeSi = np.random.normal(2,1,500)
-cmf = star_to_planet(FeSi)
-X,Y,Z = plot_cont(cmf)
+cmf = st_pl(FeSi,method="Fe2Si")
+X,Y,Z = plot_cont(cmf,[1,15])
 cb = plt.contourf(X,Y,Z,100,cmap='Reds')
 plt.colorbar(cb,label='Normalized Probability')
 plt.scatter(data[0],data[1])
@@ -42,5 +43,5 @@ for i,item in enumerate(c):
     for j,item in enumerate(x):
         R[j] = guess_R(item,0,cmf=c[i])
     plt.plot(x,R,c='k',zorder=10)
-plt.savefig('FeSi_star.jpg',fig=fig,bbox_inches='tight')
+plt.savefig('FeSi_star.jpg',bbox_inches='tight')
 
