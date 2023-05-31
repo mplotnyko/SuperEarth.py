@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="superearth",
-    version="1.0",
+    version="1.1",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     package_data={"superearth": ["Data/*.txt"]},
@@ -14,4 +14,9 @@ setup(
         "pandas",
         "scipy"
     ],
+    extras_require={
+        "optional": [
+            "plotly"
+        ]
+    },
 )

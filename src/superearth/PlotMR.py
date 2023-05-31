@@ -235,3 +235,114 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
     return fig,ax
 
 
+def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=[4, 0.3, 0], Teq_kwargs=None,
+            Mrange=[1, 20], Rrange=[1, 3], axes_yscale="log", axes_xscale="log", show_cmf=True,
+            cmf_param=None, show_H2O=True, show_H=False, show_stars=False, stars_param=[2, 1, 'Fe2Mg'],
+            stars_quantiles=[2.3,16,50], star_kwargs=None, fig=None):
+    """
+    Plotly version of the plotting exoplanet data.
+    For plotly to work in Jupyterlab, need to have ipywidgets and jupyter-dash modules.
+    Cehck plotly getting-started section for more information.
+    """
+    try:
+        import plotly.graph_objects as go
+    except:
+        print("Importing plotly failed, make sure you have all the modules installed.")
+        return None
+    
+    if fig:
+        fig = go.FigureWidget(fig)
+        ax = fig.data[0]
+    else:
+        fig = go.FigureWidget()
+        ax = go.Scatter()
+
+    if not Teq_kwargs:
+        Teq_kwargs = {}
+    if not star_kwargs:
+        star_kwargs = {'color': 'indigo'}
+    Mmin, Mmax = Mrange
+    Rmin, Rmax = Rrange
+    Mass = np.linspace(Mmin, Mmax, 30)
+
+    if show_stars:
+        FeX = np.random.normal(stars_param[0], stars_param[1], 1000)
+        cmf_st = st_pl(FeX, method=stars_param[2])
+        for tmp, percentile in enumerate(stars_quantiles):
+            cmf_perc = np.percentile(cmf_st, [percentile, 100 - percentile])
+            R1 = [guess_R(mass, 0, cmf=cmf_perc[0]) for mass in Mass]
+            R2 = [guess_R(mass, 0, cmf=cmf_perc[1]) for mass in Mass]
+
+            fig.add_trace(go.Scatter(x=Mass, y=R1, fill=None, mode='lines', line_color='indigo', 
+                                     showlegend=False, hoverinfo='skip'))
+            if R1 != R2:
+                # Add R2 curve with fill
+                fig.add_trace(go.Scatter(x=Mass, y=R2, fill='tonexty', mode='lines', line_color=star_kwargs['color'],
+                                         showlegend=False, hoverinfo='skip'))
+
+    if show_cmf:
+        if not cmf_param:
+            cmf_param = {'cmf': [0., 0.33, 0.67, 1.],
+                         'label': ['RTR', 'Earth', 'Merc', 'Fe'],
+                         'color': ['black', 'green', 'red', 'black']}
+        for cmf, label, c in zip(cmf_param['cmf'], cmf_param['label'], cmf_param['color']):
+            Radius = np.array([guess_R(mass, 0, cmf=cmf) for mass in Mass])
+            fig.add_trace(go.Scatter(x=Mass, y=Radius, mode='lines', line=dict(color=c), 
+                                     showlegend=False, hoverinfo='skip'))
+            # fig.add_annotation(x=np.log10(Mass[-1]),y=np.log10(Radius[-1]),
+            #     text=label,font=dict(size=15, color=color),showarrow=False,
+            #     xanchor='center',yanchor='bottom')
+    if show_stars:
+        fig.add_trace(go.Scatter(x=[Mass[-1]], y=[R1[-1]], showlegend=False, 
+                    mode='markers', marker=dict(symbol='star', size=15, color='white'),       
+                    hovertemplate='%{customdata[2]}:   %{customdata[0]} +/- %{customdata[1]}',
+                    customdata=[(stars_param[0], stars_param[1], stars_param[2])]))
+
+    if show_H2O:
+        # plot H2O envelope planet
+        M, R = MR_H2O()
+        fig.add_trace(go.Scatter(x=M, y=R, mode='lines', line=dict(color='blue'),showlegend=False,hoverinfo='skip'))
+
+    if show_H:
+        # plot H-He envelope planet
+        M, R = MR_HHe()
+        fig.add_trace(go.Scatter(x=M, y=R, mode='lines', line=dict(color='blue'),showlegend=False,hoverinfo='skip'))
+
+        
+    if Teq:
+        # some magic numbers
+        Rsun = 6.95508e8  # in m
+        Au = 1.496e11  # in m
+        a = ((data.pl_orbper / 365.25) ** 2 * data.st_mass) ** (1 / 3)  # in Au
+        Flux = (data.st_teff) ** 4 * (data.st_rad * Rsun) ** 2 / (Au * a) ** 2  # no constants
+        f, A, C = Teq_param
+        Teq = C + (Flux / f) ** 0.25 * (1 - A) ** 0.25
+        color = Teq
+        
+    # plot the data
+    error_x = dict(type='data', array=-data.pl_masseerr2, arrayminus=data.pl_masseerr1, visible=True)
+    error_y = dict(type='data', array=-data.pl_radeerr2, arrayminus=data.pl_radeerr1, visible=True)
+    scatter_trace = go.Scatter(
+        x=data.pl_masse,
+        y=data.pl_rade,
+        mode='markers',
+        showlegend=False,
+        error_x=error_x,
+        error_y=error_y,
+        marker=dict(color=np.log10(color), colorscale="Magma",symbol=marker, opacity=1, size=size, 
+                                colorbar=dict(thickness=10)),
+        hovertemplate='Name: %{text}<br>Mass: %{x}<br>Radius:%{y}<br>Teq: %{customdata[0]}<br>Reference: %{customdata[1]}',
+        text=data.pl_name,
+        customdata=list(zip(np.round(Teq, decimals=0), data.pl_refname))
+    )
+
+    # Add the scatter plot trace to the figure
+    fig.add_trace(scatter_trace)
+
+    fig.update_layout(width=1000, height=600,
+        xaxis=dict(type=axes_xscale, range=[np.log10(Mmin), np.log10(Mmax)]),
+        yaxis=dict(type=axes_yscale, range=[np.log10(Rmin), np.log10(Rmax)]),
+        xaxis_title=r'M',
+        yaxis_title=r'R'
+    )
+    return fig

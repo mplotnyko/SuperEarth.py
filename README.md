@@ -1,15 +1,15 @@
 # SuperEarth 
-
-se package has an analytical model that can calculate interior parameters of exoplanets and plot them, plus can plot and query existing exoplanet data using [NASA Exoplanet Archive's TAP service](https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html#PS).
+This package includes an analytical model for easily calculating the interior parameters of exoplanets and plotting them. Additionally, it can plot and query existing exoplanet data using [NASA Exoplanet Archive's TAP service](https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html#PS). The interior paramters that can be calculated are listed bellow:
 1. The core mass fraction (cmf $M_{core}/M_{total}$) 
 2. The refractory ratio of iron to silica Fe/Si (by weight) 
-3. Uncompressed  density ($\rho_0$) 4. Radius or Mass, given an estimate for Fe/Si (e.g. host star)  for a rocky Super-Earth planet (1-20$M_e$). 
+3. Uncompressed  density ($\rho_0$) 
+4. Radius or Mass, given an estimate for Fe/Si (e.g. host star)  for a rocky Super-Earth planet (1-20 $M_e$). 
 The functions were obtained assuming a similar mineral content to Earth with major element composition of Mg-Fe-Si-O. 
 The analytical function is a fit to a set of generated planetary structures using interior structure code which follows Valencia et al. [(2006)](https://iopscience.iop.org/article/10.1086/509800),[(2007)](https://www.sciencedirect.com/science/article/abs/pii/S0019103505004574), for more information visit [Plotnykov & Valencia (2020)](https://arxiv.org/abs/2010.06480) work.
 
 ## Installation
 
-1. pip install from git
+pip install from git
 
 ```pip install git+https://github.com/mplotnyko/superearth.py```
 
@@ -55,6 +55,6 @@ For example:
 Here is the result of such an experiment, where the density contour are converted stars and the points are some simulated planets, with solid lines represent cmf = 0, 0.32, 0.67, 1 cases from top to bottom.
 ![](images/FeSi_star.jpg)
 
-Now also supports ploting exoplanets from a NASA Exoplanet Archive, here is an example of only rocky planets.
+Now also supports ploting exoplanets from a NASA Exoplanet Archive (optional plotly support), here is an example of only rocky planets.
 ![](images/MR_rockybest.jpg)
 These examples can be found in the example floder.
