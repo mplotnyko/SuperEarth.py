@@ -76,9 +76,9 @@ def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrang
             #    f'(pl_rade-pl_radeerr1*0.5)>(pl_masse+pl_masseerr1*0.5)**0.27*10**0.03'
         df_exo.query(rock,inplace=True)
     if exclude:
-        df_exo.query(f'pl_name!={exclude}',inplace=True)
+        df_exo.query('pl_name!=@exclude',inplace=True)
     if limit:
-        df_exo.query(f'pl_name=={limit}',inplace=True)
+        df_exo.query('pl_name==@limit',inplace=True)
     df_exo.reset_index(inplace=True,drop=True)
     return df_exo
 
