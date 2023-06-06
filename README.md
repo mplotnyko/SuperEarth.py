@@ -44,7 +44,7 @@ For example, assuming some Fe/Si distribution for stars and finding the correspo
 Assuming nominal case for the planet composition.
 
     FeSi = np.random.normal(2,1,500)
-    cmf = se.star_to_planet(FeSi,si=0,fe=0.1,py=0.6)
+    cmf = se.st_pl(FeSi,si=0,fe=0.1,py=0.6)
 
 Furthermore, assuming that a planet forms with the same Fe/Si (by weight) ratio and observing its mass (in $M_e$), we can guess the radius (in $R_e$) for such planet.
 For example:
