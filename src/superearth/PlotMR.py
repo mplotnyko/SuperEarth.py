@@ -9,7 +9,7 @@ from superearth.utils import check_cache_archive,plot_cont,plot_cmf,MR_H2O,MR_HH
 package_dir = os.path.dirname(__file__)
 check_cache_archive()
 def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrange=[0, 4.5], Teffrange=None,
-               onlymultiplanet=False, onlyMplanets=False, rocky=False, query=None):
+               onlymultiplanet=False, onlyMplanets=False, rocky=False, limit=None, exclude=None,query=None):
     """
     Retrieves exoplanet data from the NASA Exoplanet Archive.
 
@@ -37,8 +37,11 @@ def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrang
     rocky: bool, default: True
         Flag whether to use only rocky planets.
     query: str, default: None
-        Additional custom query string to filter the data.
-
+        Custom query string to filter the data, replaces error requests.
+    limit: list, default: None
+        Query only for the planets in the list.
+    exclude: list, default: None
+        Exclude planets in the list from query.
     Returns
     -------
     class: pandas.DataFrame
@@ -46,9 +49,13 @@ def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrang
 
     """
     df_exo = pd.read_csv(package_dir+"/Data/ExoplanetArchiveData.csv")    
-    all_query = f'{Mrange[0]}<pl_masse<{Mrange[1]} and {Rrange[0]}<pl_rade<{Rrange[1]} '+\
+    if query:
+        all_query = query
+    else:
+        all_query = f'{Mrange[0]}<pl_masse<{Mrange[1]} and {Rrange[0]}<pl_rade<{Rrange[1]} '+\
                 f'and pl_masseerr1/pl_masse<{Merr} and pl_radeerr1/pl_rade<{Rerr} and  '+\
                 f'pl_masselim>-1 and pl_radelim>-1'
+
     if best_pl:
         df_exo.query('pl_masse>0 and pl_rade>0 and pl_masselim>-1 and pl_radelim>-1',inplace=True)
         df_exo.drop_duplicates(subset=['pl_name'],inplace=True)
@@ -60,17 +67,18 @@ def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrang
     if onlymultiplanet:
         all_query += ' and sy_pnum>1'
     if onlyMplanets:
-        all_query += ' and st_teff<3700'
+        all_query += ' and st_teff<3700'    
     df_exo.query(all_query,inplace=True)
-
 
     if rocky:
         rock = f'(pl_rade-pl_radeerr1)<(pl_masse)**0.27*10**0.03 | '+\
                f'(pl_rade)<(pl_masse+pl_masseerr1)**0.27*10**0.03'
             #    f'(pl_rade-pl_radeerr1*0.5)>(pl_masse+pl_masseerr1*0.5)**0.27*10**0.03'
         df_exo.query(rock,inplace=True)
-    if query:
-        df_exo.query(query)
+    if exclude:
+        df_exo.query(f'pl_name!={exclude}',inplace=True)
+    if limit:
+        df_exo.query(f'pl_name=={limit}',inplace=True)
     df_exo.reset_index(inplace=True,drop=True)
     return df_exo
 
