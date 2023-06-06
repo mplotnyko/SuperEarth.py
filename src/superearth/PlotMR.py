@@ -210,15 +210,17 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
                 yerr=[-data.pl_radeerr2,data.pl_radeerr1],fmt=' ',color='k',alpha=0.6,zorder=1)
     
     if Teq:
-        #some magic numbers
-        Rsun = 6.95508e8 #in m
-        Au = 1.496e11 #in m
-        a = ((data.pl_orbper/365.25)**2*data.st_mass)**(1/3) #in Au
-        Flux = (data.st_teff)**4*(data.st_rad*Rsun)**2/(Au*a)**2 #no constants
-        f,A,C = Teq_param
-        Teq = C+(Flux/f)**0.25*(1-A)**0.25 
-        
-        cm = ax.scatter(data.pl_masse,data.pl_rade,c=Teq,zorder=1,**Teq_kwargs)
+        if data.st_rad[0]>0:
+            #some magic numbers
+            Rsun = 6.95508e8 #in m
+            Au = 1.496e11 #in m
+            a = ((data.pl_orbper/365.25)**2*data.st_mass)**(1/3) #in Au
+            Flux = (data.st_teff)**4*(data.st_rad*Rsun)**2/(Au*a)**2 #no constants
+            f,A,C = Teq_param
+            Teq_pl = C+(Flux/f)**0.25*(1-A)**0.25 
+        else:
+            Teq_pl = data.pl_eqt
+        cm = ax.scatter(data.pl_masse,data.pl_rade,c=Teq_pl,zorder=1,**Teq_kwargs)
         if show_Teq:
             cb = fig.colorbar(cm,label=r'$T_{eq}$ (K)')
     else:
@@ -317,15 +319,20 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         fig.add_trace(go.Scatter(x=M, y=R, mode='lines', line=dict(color='blue'),showlegend=False,hoverinfo='skip'))
 
     if Teq:
-        # some magic numbers
-        Rsun = 6.95508e8  # in m
-        Au = 1.496e11  # in m
-        a = ((data.pl_orbper / 365.25) ** 2 * data.st_mass) ** (1 / 3)  # in Au
-        Flux = (data.st_teff) ** 4 * (data.st_rad * Rsun) ** 2 / (Au * a) ** 2  # no constants
-        f, A, C = Teq_param
-        Teq = C + (Flux / f) ** 0.25 * (1 - A) ** 0.25
-        color = Teq
-        
+        if data.st_rad[0]>0:
+            # some magic numbers
+            Rsun = 6.95508e8  # in m
+            Au = 1.496e11  # in m
+            a = ((data.pl_orbper / 365.25) ** 2 * data.st_mass) ** (1 / 3)  # in Au
+            Flux = (data.st_teff) ** 4 * (data.st_rad * Rsun) ** 2 / (Au * a) ** 2  # no constants
+            f, A, C = Teq_param
+            Teq_pl = C + (Flux / f) ** 0.25 * (1 - A) ** 0.25
+        else:
+            Teq_pl = data.pl_eqt
+        color = Teq_pl
+        Teq_pl = np.round(Teq_pl, decimals=0)
+
+
     # plot the data
     error_x = dict(type='data', array=data.pl_masseerr1, arrayminus=-data.pl_masseerr2, visible=True)
     error_y = dict(type='data', array=data.pl_radeerr1, arrayminus=-data.pl_radeerr2, visible=True)
@@ -340,7 +347,7 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
                                 colorbar=dict(thickness=10)),
         hovertemplate='Name: %{text}<br>Mass: %{x}<br>Radius:%{y}<br>Teq: %{customdata[0]}<br>Reference: %{customdata[1]}',
         text=data.pl_name,
-        customdata=list(zip(np.round(Teq, decimals=0), data.pl_refname))
+        customdata=list(zip(Teq_pl, data.pl_refname))
     )
 
     # Add the scatter plot trace to the figure
