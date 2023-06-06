@@ -21,7 +21,8 @@ def check_cache_archive():
             warnings.warn(message)
 def update():
     #quering ipac nasa database
-    listdb = """default_flag,pl_name,hostname,sy_pnum,discoverymethod,disc_year,disc_facility,
+    listdb = """default_flag,pl_name,hd_name,hip_name,tic_id,gaia_id,
+                hostname,sy_pnum,discoverymethod,disc_year,disc_facility,
                 pl_refname,pl_orbper,pl_orbpererr1,pl_orbpererr2,pl_orbperlim,
                 pl_rade,pl_radeerr1,pl_radeerr2,pl_radelim,pl_masse,pl_masseerr1,pl_masseerr2,
                 pl_masselim,pl_orbeccen,pl_orbeccenerr1,pl_orbeccenerr2,pl_orbeccenlim,pl_eqt,

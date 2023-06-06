@@ -319,18 +319,20 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         fig.add_trace(go.Scatter(x=M, y=R, mode='lines', line=dict(color='blue'),showlegend=False,hoverinfo='skip'))
 
     if Teq:
-        if data.st_rad[0]>0:
-            # some magic numbers
-            Rsun = 6.95508e8  # in m
-            Au = 1.496e11  # in m
-            a = ((data.pl_orbper / 365.25) ** 2 * data.st_mass) ** (1 / 3)  # in Au
-            Flux = (data.st_teff) ** 4 * (data.st_rad * Rsun) ** 2 / (Au * a) ** 2  # no constants
-            f, A, C = Teq_param
-            Teq_pl = C + (Flux / f) ** 0.25 * (1 - A) ** 0.25
-        else:
-            Teq_pl = data.pl_eqt
+        # some magic numbers
+        Rsun = 6.95508e8  # in m
+        Au = 1.496e11  # in m
+        a = ((data.pl_orbper / 365.25) ** 2 * data.st_mass) ** (1 / 3)  # in Au
+        Flux = (data.st_teff) ** 4 * (data.st_rad * Rsun) ** 2 / (Au * a) ** 2  # no constants
+        f, A, C = Teq_param
+        Teq_pl = C + (Flux / f) ** 0.25 * (1 - A) ** 0.25
         color = Teq_pl
         Teq_pl = np.round(Teq_pl, decimals=0)
+        marker_dict = dict(color=color, colorscale="Magma",symbol=marker, opacity=1, size=size, 
+                                colorbar=dict(thickness=10))
+    else:
+        Teq_pl = data.pl_eqt
+        marker_dict = dict(color=color, symbol=marker, opacity=1, size=size)
 
 
     # plot the data
@@ -343,8 +345,7 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         showlegend=False,
         error_x=error_x,
         error_y=error_y,
-        marker=dict(color=np.log10(color), colorscale="Magma",symbol=marker, opacity=1, size=size, 
-                                colorbar=dict(thickness=10)),
+        marker=marker_dict,
         hovertemplate='Name: %{text}<br>Mass: %{x}<br>Radius:%{y}<br>Teq: %{customdata[0]}<br>Reference: %{customdata[1]}',
         text=data.pl_name,
         customdata=list(zip(Teq_pl, data.pl_refname))
