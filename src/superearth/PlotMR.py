@@ -308,7 +308,6 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         M, R = MR_HHe()
         fig.add_trace(go.Scatter(x=M, y=R, mode='lines', line=dict(color='blue'),showlegend=False,hoverinfo='skip'))
 
-        
     if Teq:
         # some magic numbers
         Rsun = 6.95508e8  # in m
@@ -320,8 +319,8 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         color = Teq
         
     # plot the data
-    error_x = dict(type='data', array=-data.pl_masseerr2, arrayminus=data.pl_masseerr1, visible=True)
-    error_y = dict(type='data', array=-data.pl_radeerr2, arrayminus=data.pl_radeerr1, visible=True)
+    error_x = dict(type='data', array=data.pl_masseerr1, arrayminus=-data.pl_masseerr2, visible=True)
+    error_y = dict(type='data', array=data.pl_radeerr1, arrayminus=-data.pl_radeerr2, visible=True)
     scatter_trace = go.Scatter(
         x=data.pl_masse,
         y=data.pl_rade,
