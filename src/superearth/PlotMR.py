@@ -235,7 +235,7 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
     ax.set_ylim(Rmin,Rmax)
     ax.set_xlabel(r'M/M$_\oplus$')
     ax.set_ylabel(r'R/R$_\oplus$')
-    formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+    formatter = FuncFormatter(lambda y, _: '{:.15g}'.format(y))
     if axes_yscale=='log':
         # yticks = np.concatenate([(np.linspace(Rmin,2,4)).round(1),
         #                          (np.linspace(2,Rmax,4)).round(1)])
@@ -307,7 +307,10 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
                          'label': ['RTR', 'Earth', 'Merc', 'Fe'],
                          'color': ['black', 'green', 'red', 'black']}
         for cmf, label, c in zip(cmf_param['cmf'], cmf_param['label'], cmf_param['color']):
-            Radius = np.array([guess_R(mass, 0, cmf=cmf) for mass in Mass])
+            Radius = np.empty(len(Mass))
+            pos = (Mass>1)  # get the Masses that can be evaluted by the function
+            Radius[pos] = np.array([guess_R(mass,0,cmf=cmf) for mass in Mass[pos]]) 
+            m,c = np.polyfit(np.log10(Mass[pos]),np.log10(Radius[pos]),1) # get the best-fit parameters for straight line
             fig.add_trace(go.Scatter(x=Mass, y=Radius, mode='lines', line=dict(color=c), 
                                      showlegend=False, hoverinfo='skip'))
             # fig.add_annotation(x=np.log10(Mass[-1]),y=np.log10(Radius[-1]),
