@@ -1,6 +1,6 @@
 import os
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter,NullFormatter
 import numpy as np
 import pandas as pd
 from superearth import st_pl,guess_R
@@ -83,7 +83,7 @@ def exoplanets(Merr, Rerr, default_pl=True, best_pl=False, Mrange=[0, 30], Rrang
     return df_exo
 
 def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 0.3, 0], Teq_kwargs=None,
-            Mrange=[1, 20], Rrange=[1, 3], axes_yscale="log", axes_xscale="log", show_cmf=True,
+            Mrange=None, Rrange=None, axes_yscale="log", axes_xscale="log", show_cmf=True,
             cmf_param=None, show_H2O=True, show_H=False, show_stars=False, stars_param=[2,1,'Fe2Mg'],
             stars_quantiles=None,star_kwargs=None, fig=None, **data_kwargs):
     """
@@ -170,8 +170,12 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
         Teq_kwargs = {}
     if not star_kwargs:
         star_kwargs = {'color':'purple'}
-    Mmin,Mmax = Mrange
-    Rmin,Rmax = Rrange
+    Mmin,Mmax = min(data.pl_masse)*0.9,max(data.pl_masse)*1.1
+    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_masse)*1.1
+    if Mrange:
+        Mmin,Mmax = Mrange
+    if Rrange:
+        Mmin,Mmax = Rrange
     Mass = np.linspace(Mmin,Mmax,30)
     
     if show_stars:
@@ -233,12 +237,15 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
     ax.set_ylabel(r'R/R$_\oplus$')
     formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
     if axes_yscale=='log':
-        yticks = np.concatenate([(np.linspace(Rmin,2,4)).round(1),
-                                 (np.linspace(2,Rmax,4)).round(1)])
+        # yticks = np.concatenate([(np.linspace(Rmin,2,4)).round(1),
+        #                          (np.linspace(2,Rmax,4)).round(1)])
+        yticks = np.concatenate([(np.linspace(Rmin,Rmax,8)).round(1)])
         ax.set_yticks(yticks)
         ax.yaxis.set_major_formatter(formatter)
+        ax.yaxis.set_minor_formatter(NullFormatter())
     if axes_xscale=='log':
         xticks = (10**np.linspace(np.log10(Mmin),np.log10(Mmax),8)).round(0)
+        xticks[0] = np.max([xticks[0],Mmin]).round(1)
         ax.set_xticks(xticks)
         ax.xaxis.set_major_formatter(formatter)
 
@@ -271,8 +278,12 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         Teq_kwargs = {}
     if not star_kwargs:
         star_kwargs = {'color': 'indigo'}
-    Mmin, Mmax = Mrange
-    Rmin, Rmax = Rrange
+    Mmin,Mmax = min(data.pl_masse)*0.9,max(data.pl_masse)*1.1
+    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_masse)*1.1
+    if Mrange:
+        Mmin,Mmax = Mrange
+    if Rrange:
+        Mmin,Mmax = Rrange
     Mass = np.linspace(Mmin, Mmax, 30)
 
     if show_stars:
