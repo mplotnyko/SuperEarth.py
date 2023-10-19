@@ -231,8 +231,6 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
         ax.scatter(data.pl_masse,data.pl_rade,color=color,marker=marker,zorder=1,**data_kwargs)
     ax.set_yscale(axes_yscale)
     ax.set_xscale(axes_xscale)
-    ax.set_xlim(Mmin,Mmax)
-    ax.set_ylim(Rmin,Rmax)
     ax.set_xlabel(r'M/M$_\oplus$')
     ax.set_ylabel(r'R/R$_\oplus$')
     formatter = FuncFormatter(lambda y, _: '{:.15g}'.format(y))
@@ -248,7 +246,9 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
         xticks[0] = np.max([xticks[0],Mmin]).round(1)
         ax.set_xticks(xticks)
         ax.xaxis.set_major_formatter(formatter)
-
+    
+    ax.set_xlim(Mmin,Mmax)
+    ax.set_ylim(Rmin,Rmax)
     return fig,ax
 
 
