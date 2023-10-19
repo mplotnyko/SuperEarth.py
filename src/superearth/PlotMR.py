@@ -253,7 +253,7 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
 
 
 def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=[4, 0.3, 0], Teq_kwargs=None,
-            Mrange=[1, 20], Rrange=[1, 3], axes_yscale="log", axes_xscale="log", show_cmf=True,
+            Mrange=None, Rrange=None, axes_yscale="log", axes_xscale="log", show_cmf=True,
             cmf_param=None, show_H2O=True, show_H=False, show_stars=False, stars_param=[2, 1, 'Fe2Mg'],
             stars_quantiles=[2.3,16,50], star_kwargs=None, fig=None):
     """
