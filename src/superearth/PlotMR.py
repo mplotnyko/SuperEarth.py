@@ -176,7 +176,7 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
         Mmin,Mmax = Mrange
     if Rrange:
         Rmin,Rmax = Rrange
-    Mass = 10**np.linspace(np.log10(Mmin),np.log10(Min([Mmax,50])),128)
+    Mass = 10**np.linspace(np.log10(Mmin),np.log10(min([Mmax,50])),128)
     
     if show_stars:
         FeX = np.random.normal(stars_param[0],stars_param[1],1000)
@@ -284,7 +284,7 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
         Mmin,Mmax = Mrange
     if Rrange:
         Rmin,Rmax = Rrange
-    Mass = 10**np.linspace(np.log10(Mmin),np.log10(Min([Mmax,50])),128)
+    Mass = 10**np.linspace(np.log10(Mmin),np.log10(min([Mmax,50])),128)
 
     if show_stars:
         FeX = np.random.normal(stars_param[0], stars_param[1], 1000)
