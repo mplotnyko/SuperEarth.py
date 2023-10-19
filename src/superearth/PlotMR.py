@@ -306,12 +306,14 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
             cmf_param = {'cmf': [0., 0.33, 0.67, 1.],
                          'label': ['RTR', 'Earth', 'Merc', 'Fe'],
                          'color': ['black', 'green', 'red', 'black']}
-        for cmf, label, c in zip(cmf_param['cmf'], cmf_param['label'], cmf_param['color']):
+        for cmf, label, color in zip(cmf_param['cmf'], cmf_param['label'], cmf_param['color']):
             Radius = np.empty(len(Mass))
             pos = (Mass>1)  # get the Masses that can be evaluted by the function
             Radius[pos] = np.array([guess_R(mass,0,cmf=cmf) for mass in Mass[pos]]) 
-            m,c = np.polyfit(np.log10(Mass[pos]),np.log10(Radius[pos]),1) # get the best-fit parameters for straight line
-            fig.add_trace(go.Scatter(x=Mass, y=Radius, mode='lines', line=dict(color=c), 
+            ii = np.argmax(pos)
+            m,c = np.polyfit(np.log10(Mass[ii:ii+5]),np.log10(Radius[ii:ii+5]),1) # get the best-fit parameters for straight line
+            Radius[np.invert(pos)] = 10**(m*np.log10(Mass[np.invert(pos)])+c) # get the Radius that is outside the function 
+            fig.add_trace(go.Scatter(x=Mass, y=Radius, mode='lines', line=dict(color=color), 
                                      showlegend=False, hoverinfo='skip'))
             # fig.add_annotation(x=np.log10(Mass[-1]),y=np.log10(Radius[-1]),
             #     text=label,font=dict(size=15, color=color),showarrow=False,

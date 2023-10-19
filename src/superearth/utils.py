@@ -116,7 +116,8 @@ def plot_cmf(ax,Mass,cmf,label,color):
     Radius = np.empty(len(Mass))
     pos = (Mass>1)  # get the Masses that can be evaluted by the function
     Radius[pos] = np.array([guess_R(mass,0,cmf=cmf) for mass in Mass[pos]]) 
-    m,c = np.polyfit(np.log10(Mass[pos]),np.log10(Radius[pos]),1) # get the best-fit parameters for straight line
+    ii = np.argmax(pos)
+    m,c = np.polyfit(np.log10(Mass[ii:ii+5]),np.log10(Radius[ii:ii+5]),1) # get the best-fit parameters for straight line
     Radius[np.invert(pos)] = 10**(m*np.log10(Mass[np.invert(pos)])+c) # get the Radius that is outside the function 
     ax.plot(Mass,Radius,color=color,zorder=0)
     dx,dy = Mass[1]-Mass[0],Radius[2]-Radius[0]
