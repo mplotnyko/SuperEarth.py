@@ -171,11 +171,11 @@ def plot_pl(data, color='b', marker='o', Teq=True, show_Teq=True, Teq_param=[4, 
     if not star_kwargs:
         star_kwargs = {'color':'purple'}
     Mmin,Mmax = min(data.pl_masse)*0.9,max(data.pl_masse)*1.1
-    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_masse)*1.1
+    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_rade)*1.1
     if Mrange:
         Mmin,Mmax = Mrange
     if Rrange:
-        Mmin,Mmax = Rrange
+        Rmin,Rmax = Rrange
     Mass = np.linspace(Mmin,Mmax,30)
     
     if show_stars:
@@ -279,11 +279,11 @@ def plotly_pl(data, color='black', marker='circle',size=10, Teq=True, Teq_param=
     if not star_kwargs:
         star_kwargs = {'color': 'indigo'}
     Mmin,Mmax = min(data.pl_masse)*0.9,max(data.pl_masse)*1.1
-    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_masse)*1.1
+    Rmin,Rmax = min(data.pl_rade)*0.9,max(data.pl_rade)*1.1
     if Mrange:
         Mmin,Mmax = Mrange
     if Rrange:
-        Mmin,Mmax = Rrange
+        Rmin,Rmax = Rrange
     Mass = np.linspace(Mmin, Mmax, 30)
 
     if show_stars:
