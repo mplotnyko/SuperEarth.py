@@ -21,7 +21,7 @@ def check_cache_archive():
             warnings.warn(message)
 def update():
     #quering ipac nasa database
-    listdb = """default_flag,pl_name,hd_name,hip_name,tic_id,gaia_id,
+    listdb = """default_flag,pl_name,hd_name,hip_name,tic_id,
                 hostname,sy_pnum,discoverymethod,disc_year,disc_facility,
                 pl_refname,pl_orbper,pl_orbpererr1,pl_orbpererr2,pl_orbperlim,
                 pl_rade,pl_radeerr1,pl_radeerr2,pl_radelim,pl_masse,pl_masseerr1,pl_masseerr2,
@@ -33,11 +33,19 @@ def update():
     nasa_url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select" 
     query = "where+default_flag+between+0+and+1" #get all published data for planets
     url = f"{nasa_url}+{listdb}+from+ps+{query}&format=csv"
-    df_orig = pd.read_csv(url)
-    df_orig.sort_values(by=['pl_name', 'rowupdate'],inplace=True)
-    df_orig.reset_index(inplace=True,drop=True)                        
-    df_orig.to_csv(package_dir+"/Data/ExoplanetArchiveData.csv") # save updated table
-    return 
+    df_orig = None
+    try:
+        df_orig = pd.read_csv(url)
+        df_orig.sort_values(by=['pl_name', 'rowupdate'],inplace=True)
+        df_orig.reset_index(inplace=True,drop=True)                        
+        df_orig.to_csv(package_dir+"/Data/ExoplanetArchiveData.csv") # save updated table
+    except urllib.error.URLError as e:
+        print("\n CONNECTION ERROR: Could not reach the database.")
+        print(f"Technical reason:\n{e.reason}")
+    except Exception as e:
+        # If any other errors
+        print(f"\n An unexpected error occurred:\n{e}")
+    return df_orig
 def exodata(Name, Mass, Radius, M_err=None, R_err=None, Teq=None, ref=None, star=None, P_pl=None):
     """
     Create a pandas DataFrame object for custom exoplanet data.
